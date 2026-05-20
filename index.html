@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>Laundry Mama — Laba Love Card</title>
+  <title>Laundry Mama — Laba Rewards</title>
   <meta name="theme-color" content="#4A90E2" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -23,10 +23,10 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
     body { background: #E6F7F2; font-family: 'Plus Jakarta Sans', sans-serif; }
-    .card { background: white; border-radius: 28px; box-shadow: 0 10px 30px rgba(74,144,226,0.08); }
-    .tap { -webkit-tap-highlight-color: transparent; }
+   .card { background: white; border-radius: 28px; box-shadow: 0 10px 30px rgba(74,144,226,0.08); }
+   .tap { -webkit-tap-highlight-color: transparent; }
     #scannerVideo { border-radius: 24px; overflow: hidden; }
-    #scannerVideo video { width: 100% !important; border-radius: 24px; }
+    #scannerVideo video { width: 100%!important; border-radius: 24px; }
   </style>
 </head>
 <body class="min-h-screen text-gray-800 antialiased">
@@ -41,425 +41,349 @@
           <h1 class="text-[22px] font-extrabold leading-tight tracking-tight">Laundry Mama</h1>
           <p class="text-mama font-semibold -mt-1">Laba Love Card</p>
         </div>
+      </div>
       <p class="text-center text-sm text-gray-600 mt-2">Ipon stamps, libre laba! Suking-suki rewards 💙</p>
     </header>
 
     <!-- Tabs -->
     <div class="card p-1.5 mb-5">
       <div class="grid grid-cols-2 gap-1.5">
-        <button id="tabCustomer" onclick="switchTab('customer')" class="tap flex-1 py-2.5 px-4 rounded-full font-semibold transition">Customer</button>
-        <button id="tabStaff" onclick="switchTab('staff')" class="tap flex-1 py-2.5 px-4 rounded-full font-semibold transition">Staff</button>
+        <button id="tabCustomer" onclick="switchTab('customer')" class="tap flex-1 py-2.5 px-4 rounded-full font-semibold transition bg-mama text-white">Customer</button>
+        <button id="tabStaff" onclick="switchTab('staff')" class="tap flex-1 py-2.5 px-4 rounded-full font-semibold transition text-gray-600">Staff</button>
       </div>
     </div>
 
     <!-- CUSTOMER VIEW -->
-    <div id="customerView" class="">
-      <div class="card p-6">
-        <h2 class="font-bold text-lg mb-1">Check ang iyong stamps</h2>
-        <p class="text-sm text-gray-500 mb-4">Ilagay ang phone number na niregister mo</p>
-        <div class="flex gap-2">
-          <input id="customerPhone" type="tel" inputmode="numeric" placeholder="09XX XXX XXXX" class="flex-1 w-full px-4 py-3.5 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-mama/30 focus:border-mama text-[15px]">
-          <button id="checkBtn" onclick="checkMyLoads()" class="tap px-5 py-3.5 bg-mama text-white font-semibold rounded-2xl shadow-md shadow-mama/20 active:scale-95 transition">Check</button>
-        </div>
+    <div id="customerView">
+      <div class="card p-5 mb-4">
+        <label class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Phone Number</label>
+        <input id="phoneInput" inputmode="tel" placeholder="09XX XXX XXXX" class="mt-2 w-full px-4 py-3.5 rounded-2xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-mama/30 text-[16px]" />
+        <button id="checkBtn" onclick="checkCustomer()" class="tap mt-3 w-full py-3.5 rounded-2xl bg-mama text-white font-bold shadow-lg shadow-mama/20 active:scale-[0.98] transition">Check My Stamps</button>
       </div>
 
-      <div id="customerResult" class="hidden mt-5">
-        <div class="card p-6">
-          <div class="flex items-center justify-between mb-4">
-            <div>
-              <p class="text-xs text-gray-500">Suki</p>
-              <h3 id="custName" class="text-xl font-extrabold leading-tight">—</h3>
-              <p id="custPhone" class="text-sm text-gray-500">—</p>
-            </div>
-            <div class="text-right">
-              <p class="text-xs text-gray-500">Loads</p>
-              <div id="custLoads" class="text-3xl font-black text-mama">0 / 15</div>
-            </div>
+      <div id="customerCard" class="card p-5 hidden">
+        <div class="flex items-start justify-between">
+          <div>
+            <p class="text-xs font-semibold text-gray-500 uppercase">Suki Name</p>
+            <h2 id="custName" class="text-2xl font-extrabold mt-0.5">—</h2>
           </div>
-
-          <!-- Progress -->
-          <div class="mb-5">
-            <div class="h-3 w-full bg-mint rounded-full overflow-hidden">
-              <div id="progressBar" class="h-full bg-mama rounded-full transition-all duration-500" style="width:0%"></div>
-            </div>
-            <p class="text-xs text-gray-500 mt-1.5">15 stamps = 1 FREE wash. Kaya mo yan!</p>
+          <div class="text-right">
+            <p class="text-xs font-semibold text-gray-500 uppercase">My Stamps</p>
+            <p class="text-2xl font-extrabold text-mama"><span id="custLoads">0</span><span class="text-gray-400 text-lg">/15</span></p>
           </div>
-
-          <!-- Stamps -->
-          <div id="stampGrid" class="grid grid-cols-5 gap-3 justify-items-center"></div>
-
-          <button onclick="showCustomerQR()" class="tap w-full mt-6 py-4 bg-gray-900 text-white font-semibold rounded-2xl active:scale-[0.98] transition flex items-center justify-center gap-2">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
-            Show My QR
-          </button>
-          <p class="text-center text-xs text-gray-500 mt-3">Pakita kay staff para ma-scan</p>
         </div>
+
+        <div class="mt-4 h-2.5 w-full bg-gray-100 rounded-full overflow-hidden">
+          <div id="progressBar" class="h-full w-0 bg-gradient-to-r from-mama to-sky-400 transition-all duration-500"></div>
+        </div>
+
+        <div id="stampsGrid" class="grid grid-cols-5 gap-3 mt-5"></div>
+
+        <div class="mt-5 p-3.5 rounded-2xl bg-mint/70 border border-mama/10">
+          <p class="text-sm"><span class="font-bold text-mama">Reward:</span> 15 stamps = 1 FREE 8kg wash!</p>
+        </div>
+
+        <button onclick="showMyQR()" class="tap mt-4 w-full py-3 rounded-2xl border-2 border-mama text-mama font-bold active:scale-[0.98] transition">Show My QR</button>
       </div>
     </div>
 
     <!-- STAFF VIEW -->
     <div id="staffView" class="hidden">
       <!-- Login -->
-      <div id="staffLoginCard" class="card p-6">
-        <h2 class="font-bold text-lg mb-1">Staff Login</h2>
-        <p class="text-sm text-gray-500 mb-4">Para sa Laundry Mama crew lang</p>
-        <form onsubmit="staffLogin(event)" class="space-y-3">
-          <input id="staffEmail" type="email" placeholder="Email" required class="w-full px-4 py-3.5 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-mama/30 focus:border-mama">
-          <input id="staffPassword" type="password" placeholder="Password" required class="w-full px-4 py-3.5 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-mama/30 focus:border-mama">
-          <button id="loginBtn" type="submit" class="tap w-full py-3.5 bg-mama text-white font-semibold rounded-2xl shadow-md shadow-mama/20">Login</button>
-        </form>
+      <div id="staffLogin" class="card p-5">
+        <h3 class="font-extrabold text-lg mb-3">Staff Login</h3>
+        <input id="staffEmail" type="email" placeholder="Email" class="w-full px-4 py-3.5 rounded-2xl bg-gray-50 border border-gray-200 mb-2.5 focus:outline-none focus:ring-2 focus:ring-mama/30" />
+        <input id="staffPass" type="password" placeholder="Password" class="w-full px-4 py-3.5 rounded-2xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-mama/30" />
+        <button onclick="staffLogin()" class="tap mt-3 w-full py-3.5 rounded-2xl bg-mama text-white font-bold shadow-lg shadow-mama/20">Login</button>
+        <p class="text-xs text-gray-500 mt-3 text-center">Use your Supabase staff account</p>
       </div>
 
       <!-- Dashboard -->
-      <div id="staffDashboard" class="hidden space-y-4">
+      <div id="staffDash" class="hidden space-y-4">
         <div class="card p-4 flex items-center justify-between">
           <div>
-            <p class="text-xs text-gray-500">Naka-login bilang</p>
-            <p id="staffEmailDisplay" class="font-semibold text-sm">—</p>
+            <p class="text-xs text-gray-500">Logged in as</p>
+            <p id="staffEmailShow" class="font-bold"></p>
           </div>
-          <button onclick="staffLogout()" class="tap px-4 py-2 text-sm font-medium text-red-600 bg-red-50 rounded-xl">Logout</button>
+          <button onclick="staffLogout()" class="tap px-4 py-2 rounded-xl bg-red-500 text-white font-semibold text-sm">Logout</button>
         </div>
 
-        <!-- Scan Actions -->
         <div class="grid grid-cols-2 gap-3">
-          <button onclick="startScan('add')" class="tap card p-5 text-left hover:shadow-lg transition active:scale-95">
-            <div class="w-10 h-10 rounded-xl bg-mint flex items-center justify-center mb-3">
-              <svg class="w-5 h-5 text-mama" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-            </div>
-            <p class="font-bold leading-tight">Scan to Add</p>
-            <p class="text-xs text-gray-500">+1 stamp</p>
+          <button onclick="startScanner('add')" class="tap card p-5 text-left active:scale-[0.98] transition">
+            <div class="w-10 h-10 rounded-2xl bg-mama/10 flex items-center justify-center mb-2">📷</div>
+            <p class="font-bold">Scan to Add</p>
+            <p class="text-xs text-gray-500">Add 1 stamp</p>
           </button>
-          <button onclick="startScan('redeem')" class="tap card p-5 text-left hover:shadow-lg transition active:scale-95">
-            <div class="w-10 h-10 rounded-xl bg-mint flex items-center justify-center mb-3">
-              <svg class="w-5 h-5 text-mama" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-            </div>
-            <p class="font-bold leading-tight">Scan to Redeem</p>
-            <p class="text-xs text-gray-500">-15 stamps</p>
+          <button onclick="startScanner('redeem')" class="tap card p-5 text-left active:scale-[0.98] transition">
+            <div class="w-10 h-10 rounded-2xl bg-green-500/10 flex items-center justify-center mb-2">🎁</div>
+            <p class="font-bold">Scan Redeem</p>
+            <p class="text-xs text-gray-500">Use 15 stamps</p>
           </button>
         </div>
 
-        <!-- Scanner -->
-        <div id="scannerContainer" class="hidden card p-4">
-          <div class="flex items-center justify-between mb-3">
-            <p id="scanModeText" class="font-semibold">Scanner</p>
-            <button onclick="stopScan()" class="tap px-3 py-1.5 text-sm bg-gray-100 rounded-lg">Cancel</button>
-          </div>
-          <div id="scannerVideo" class="w-full aspect-square bg-black"></div>
-          <p class="text-xs text-center text-gray-500 mt-2">I-tapat ang QR sa camera</p>
+        <div id="scannerWrap" class="card p-4 hidden">
+          <div id="scannerVideo"></div>
+          <p id="scanModeLabel" class="text-center text-sm text-gray-600 mt-2"></p>
+          <button onclick="stopScanner()" class="tap mt-3 w-full py-2.5 rounded-xl bg-gray-100 font-semibold">Cancel</button>
         </div>
 
-        <!-- Manual Add -->
         <div class="card p-5">
-          <h3 class="font-bold mb-3">Manual Add Stamp</h3>
-          <div class="flex gap-2">
-            <input id="manualPhone" type="tel" placeholder="Phone number" class="flex-1 px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-mama/30">
-            <button onclick="manualAddLoad()" class="tap px-5 py-3 bg-mama text-white font-semibold rounded-xl">+1</button>
-          </div>
+          <h4 class="font-bold mb-2.5">Manual Add Stamp</h4>
+          <input id="manualPhone" inputmode="tel" placeholder="Customer phone" class="w-full px-4 py-3 rounded-2xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-mama/30" />
+          <input id="manualNote" placeholder="Note (optional)" class="mt-2.5 w-full px-4 py-3 rounded-2xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-mama/30" />
+          <button onclick="manualAdd()" class="tap mt-3 w-full py-3 rounded-2xl bg-mama text-white font-bold">Add 1 Stamp</button>
         </div>
 
-        <!-- Register -->
         <div class="card p-5">
-          <h3 class="font-bold mb-3">Register New Suki</h3>
-          <div class="space-y-2.5">
-            <input id="newName" type="text" placeholder="Pangalan ni Suki" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-mama/30">
-            <input id="newPhone" type="tel" placeholder="Phone number" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-mama/30">
-            <button onclick="registerSuki()" class="tap w-full py-3 bg-gray-900 text-white font-semibold rounded-xl">Register & Generate QR</button>
-          </div>
+          <h4 class="font-bold mb-2.5">Register New Suki</h4>
+          <input id="newName" placeholder="Full name" class="w-full px-4 py-3 rounded-2xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-mama/30" />
+          <input id="newPhone" inputmode="tel" placeholder="Phone number" class="mt-2.5 w-full px-4 py-3 rounded-2xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-mama/30" />
+          <button onclick="registerCustomer()" class="tap mt-3 w-full py-3 rounded-2xl bg-gray-900 text-white font-bold">Register</button>
+          <p class="text-xs text-gray-500 mt-2">Generates unique LM-XXXXXX QR</p>
         </div>
 
-        <!-- Customer Management -->
         <div class="card p-5">
           <div class="flex items-center justify-between mb-3">
-            <h3 class="font-bold">Customer Management</h3>
-            <button onclick="loadCustomerList()" class="tap p-2 hover:bg-gray-100 rounded-xl" title="Refresh">
-              <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 0 01-15.357-2m15.357 2H15"/></svg>
-            </button>
+            <h4 class="font-bold">Customer Management</h4>
+            <button onclick="loadCustomerList()" class="text-xs px-3 py-1.5 rounded-lg bg-gray-100 font-semibold">Refresh</button>
           </div>
-          <input id="searchCustomer" oninput="filterCustomers()" type="text" placeholder="Search name or phone..." class="w-full mb-3 px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-mama/30">
-          <div id="customerList" class="max-h-[360px] overflow-y-auto -mr-2 pr-2 space-y-2"></div>
+          <input id="searchCust" placeholder="Search name or phone" oninput="loadCustomerList()" class="w-full px-4 py-2.5 rounded-xl bg-gray-50 border border-gray-200 mb-3 text-sm focus:outline-none focus:ring-2 focus:ring-mama/30" />
+          <div id="custList" class="max-h-[320px] overflow-auto -mx-2 px-2 space-y-2"></div>
         </div>
       </div>
     </div>
   </div>
 
   <!-- QR Modal -->
-  <div id="qrModal" class="hidden fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-center justify-center p-6">
-    <div class="card w-full max-w-[320px] p-6 text-center">
-      <h3 id="qrModalTitle" class="font-bold text-lg mb-1">Suki QR</h3>
-      <p class="text-xs text-gray-500 mb-4">I-save o i-screenshot mo ito</p>
-      <div id="qrModalContent" class="flex justify-center p-4 bg-white rounded-2xl border"></div>
-      <button onclick="closeQRModal()" class="tap w-full mt-5 py-3 bg-gray-900 text-white font-semibold rounded-xl">Close</button>
+  <div id="qrModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-6 z-50" onclick="this.classList.add('hidden')">
+    <div class="card p-6 w-full max-w-[320px] text-center" onclick="event.stopPropagation()">
+      <h3 id="qrName" class="font-extrabold text-xl">—</h3>
+      <p id="qrCodeText" class="text-mama font-mono text-sm mt-1">—</p>
+      <div id="qrcode" class="flex justify-center my-4 p-4 bg-gray-50 rounded-2xl"></div>
+      <button onclick="document.getElementById('qrModal').classList.add('hidden')" class="tap w-full py-3 rounded-2xl bg-gray-900 text-white font-bold">Close</button>
     </div>
   </div>
 
   <!-- Toast -->
-  <div id="toast" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-[200] px-5 py-3 rounded-2xl shadow-xl text-white font-medium bg-gray-900 max-w-[90%] text-center"></div>
+  <div id="toast" class="fixed top-6 left-1/2 -translate-x-1/2 px-5 py-3 rounded-full bg-gray-900 text-white font-semibold shadow-xl opacity-0 pointer-events-none transition-all duration-300 z-[60]"></div>
 
 <script type="module">
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.43.4'
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
-const SUPABASE_URL = 'https://pwmthagkiyemdubfqdzh.supabase.co'
-const SUPABASE_ANON_KEY = 'sb_publishable_q9DAl-CDxrvx9tZl-qtZkA_Jnclhvs3'
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
-window.supabase = supabase
+const SUPABASE_URL = 'https://pwmthagkiyemdubfqdzh.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_q9DAl-CDxrvx9tZl-qtZkA_Jnclhvs3';
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-let html5QrCode = null
-let scanMode = 'add'
-window.currentCustomer = null
-window.currentStaffEmail = null
-window.allCustomers = []
+let currentUser = null;
+let html5Qr = null;
+let scanMode = 'add';
 
+// Tabs
 window.switchTab = (tab) => {
-  const isCustomer = tab === 'customer'
-  document.getElementById('customerView').classList.toggle('hidden', !isCustomer)
-  document.getElementById('staffView').classList.toggle('hidden', isCustomer)
-  document.getElementById('tabCustomer').className = `tap flex-1 py-2.5 px-4 rounded-full font-semibold transition ${isCustomer ? 'bg-mama text-white shadow-md shadow-mama/20' : 'text-gray-600 hover:text-gray-800'}`
-  document.getElementById('tabStaff').className = `tap flex-1 py-2.5 px-4 rounded-full font-semibold transition ${!isCustomer ? 'bg-mama text-white shadow-md shadow-mama/20' : 'text-gray-600 hover:text-gray-800'}`
+  const isCustomer = tab === 'customer';
+  document.getElementById('customerView').classList.toggle('hidden',!isCustomer);
+  document.getElementById('staffView').classList.toggle('hidden', isCustomer);
+  document.getElementById('tabCustomer').classList.toggle('bg-mama', isCustomer);
+  document.getElementById('tabCustomer').classList.toggle('text-white', isCustomer);
+  document.getElementById('tabStaff').classList.toggle('bg-mama',!isCustomer);
+  document.getElementById('tabStaff').classList.toggle('text-white',!isCustomer);
+};
+
+// Toast
+function toast(msg, err=false){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.background = err? '#ef4444' : '#111827';
+  t.classList.remove('opacity-0', 'pointer-events-none');
+  t.classList.add('opacity-100');
+  setTimeout(()=>{ t.classList.add('opacity-0','pointer-events-none'); t.classList.remove('opacity-100'); }, 2200);
 }
 
-window.showToast = (message, type='success') => {
-  const toast = document.getElementById('toast')
-  toast.textContent = message
-  toast.className = `fixed bottom-6 left-1/2 -translate-x-1/2 z-[200] px-5 py-3 rounded-2xl shadow-xl text-white font-medium max-w-[90%] text-center transition-all ${type==='error' ? 'bg-red-500' : 'bg-gray-900'}`
-  toast.classList.remove('hidden')
-  setTimeout(()=> toast.classList.add('hidden'), 2800)
-}
+// Customer check
+window.checkCustomer = async () => {
+  const phone = document.getElementById('phoneInput').value.replace(/\D/g,'');
+  if(phone.length < 10){ toast('Enter valid phone', true); return; }
+  const { data, error } = await supabase.from('customers').select('*').eq('phone', phone).maybeSingle();
+  if(error ||!data){ toast('Not found. Ask staff to register.', true); return; }
+  showCustomer(data);
+};
 
-window.openQRModal = (qr, name) => {
-  document.getElementById('qrModal').classList.remove('hidden')
-  document.getElementById('qrModalTitle').textContent = name || 'Suki QR'
-  const container = document.getElementById('qrModalContent')
-  container.innerHTML = ''
-  new QRCode(container, { text: qr, width: 220, height: 220, colorDark: '#0f172a', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.H })
-}
-window.closeQRModal = () => document.getElementById('qrModal').classList.add('hidden')
-
-window.checkMyLoads = async () => {
-  const phone = document.getElementById('customerPhone').value.trim()
-  if (!phone) return showToast('Ilagay ang phone number', 'error')
-  const btn = document.getElementById('checkBtn')
-  btn.disabled = true
-  const orig = btn.textContent
-  btn.textContent = '...'
-  const { data, error } = await supabase.from('customers').select('*').eq('phone', phone).maybeSingle()
-  btn.disabled = false
-  btn.textContent = orig
-  if (error || !data) {
-    showToast('Hindi pa registered. Pa-register kay staff!', 'error')
-    document.getElementById('customerResult').classList.add('hidden')
-    return
+function showCustomer(c){
+  document.getElementById('customerCard').classList.remove('hidden');
+  document.getElementById('custName').textContent = c.name;
+  document.getElementById('custLoads').textContent = c.loads || 0;
+  document.getElementById('progressBar').style.width = `${((c.loads||0)/15)*100}%`;
+  const grid = document.getElementById('stampsGrid');
+  grid.innerHTML = '';
+  for(let i=1;i<=15;i++){
+    const earned = i <= (c.loads||0);
+    const div = document.createElement('div');
+    div.className = `aspect-square rounded-full flex items-center justify-center font-bold transition ${earned? 'bg-gradient-to-br from-mama to-sky-400 text-white shadow-lg shadow-mama/20' : 'border-2 border-dashed border-gray-300 text-gray-400'}`;
+    div.innerHTML = earned? '✓' : i;
+    grid.appendChild(div);
   }
-  window.currentCustomer = data
-  document.getElementById('customerResult').classList.remove('hidden')
-  document.getElementById('custName').textContent = data.name
-  document.getElementById('custPhone').textContent = data.phone
-  document.getElementById('custLoads').textContent = `${data.loads || 0} / 15`
-  document.getElementById('progressBar').style.width = `${Math.min(100, ((data.loads||0)/15)*100)}%`
-  const grid = document.getElementById('stampGrid')
-  grid.innerHTML = ''
-  for (let i=0;i<15;i++) {
-    const filled = i < (data.loads || 0)
-    grid.innerHTML += `<div class="w-12 h-12 sm:w-[52px] sm:h-[52px] rounded-full flex items-center justify-center transition-all ${filled ? 'bg-mama shadow-lg shadow-mama/25' : 'bg-white border-2 border-mama/20'}">
-      ${filled ? '<svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 12.3l-2.6-2.6-1.4 1.4 4 4 8-8-1.4-1.4-6.6 6.6z"/></svg>' : `<span class="text-mama/40 text-[11px] font-bold">${i+1}</span>`}
-    </div>`
-  }
-  showToast(`Kumusta, ${data.name.split(' ')[0]}!`)
+  window.currentCustomer = c;
 }
 
-window.showCustomerQR = () => {
-  if (!window.currentCustomer) return
-  openQRModal(window.currentCustomer.qr_code, window.currentCustomer.name)
-}
+window.showMyQR = () => {
+  if(!window.currentCustomer) return;
+  const c = window.currentCustomer;
+  document.getElementById('qrName').textContent = c.name;
+  document.getElementById('qrCodeText').textContent = c.qr_code;
+  document.getElementById('qrcode').innerHTML = '';
+  new QRCode(document.getElementById('qrcode'), { text: c.qr_code, width: 200, height: 200 });
+  document.getElementById('qrModal').classList.remove('hidden');
+  document.getElementById('qrModal').classList.add('flex');
+};
 
-window.staffLogin = async (e) => {
-  e.preventDefault()
-  const email = document.getElementById('staffEmail').value.trim()
-  const password = document.getElementById('staffPassword').value
-  const btn = document.getElementById('loginBtn')
-  btn.disabled = true
-  btn.textContent = 'Logging in...'
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password })
-  btn.disabled = false
-  btn.textContent = 'Login'
-  if (error) return showToast(error.message, 'error')
-  window.currentStaffEmail = data.user.email
-  document.getElementById('staffLoginCard').classList.add('hidden')
-  document.getElementById('staffDashboard').classList.remove('hidden')
-  document.getElementById('staffEmailDisplay').textContent = data.user.email
-  showToast('Welcome, staff!')
-  loadCustomerList()
-}
+// Staff auth
+window.staffLogin = async () => {
+  const email = document.getElementById('staffEmail').value;
+  const pass = document.getElementById('staffPass').value;
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password: pass });
+  if(error){ toast(error.message, true); return; }
+  currentUser = data.user;
+  document.getElementById('staffLogin').classList.add('hidden');
+  document.getElementById('staffDash').classList.remove('hidden');
+  document.getElementById('staffEmailShow').textContent = currentUser.email;
+  toast('Welcome!');
+  loadCustomerList();
+};
 
 window.staffLogout = async () => {
-  await supabase.auth.signOut()
-  document.getElementById('staffDashboard').classList.add('hidden')
-  document.getElementById('staffLoginCard').classList.remove('hidden')
-  window.currentStaffEmail = null
-  showToast('Logged out')
-}
+  await supabase.auth.signOut();
+  currentUser = null;
+  document.getElementById('staffDash').classList.add('hidden');
+  document.getElementById('staffLogin').classList.remove('hidden');
+  stopScanner();
+};
 
-window.startScan = async (mode) => {
-  scanMode = mode
-  document.getElementById('scannerContainer').classList.remove('hidden')
-  document.getElementById('scanModeText').textContent = mode === 'add' ? 'Scan to Add Stamp' : 'Scan to Redeem'
-  if (!html5QrCode) html5QrCode = new Html5Qrcode("scannerVideo")
-  try {
-    await html5QrCode.start(
-      { facingMode: "environment" },
-      { fps: 10, qrbox: { width: 250, height: 250 } },
-      async (decodedText) => { await stopScan(); onScanSuccess(decodedText) },
-      () => {}
-    )
-  } catch (err) {
-    showToast('Camera error. Allow camera access.', 'error')
-    stopScan()
+// Scanner
+window.startScanner = async (mode) => {
+  if(!currentUser){ toast('Login first', true); return; }
+  scanMode = mode;
+  document.getElementById('scannerWrap').classList.remove('hidden');
+  document.getElementById('scanModeLabel').textContent = mode==='add'? 'Point at QR to ADD 1 stamp' : 'Point at QR to REDEEM';
+  try{
+    if(!html5Qr) html5Qr = new Html5Qrcode('scannerVideo');
+    const cams = await Html5Qrcode.getCameras();
+    const camId = cams.find(c=>/back|rear|environment/i.test(c.label))?.id || cams[0].id;
+    await html5Qr.start(camId, { fps:10, qrbox:250 }, (txt)=>{ stopScanner(); handleScan(txt); }, ()=>{});
+  }catch(e){ toast('Camera error: '+e.message, true); stopScanner(); }
+};
+
+window.stopScanner = () => {
+  if(html5Qr && html5Qr.isScanning) html5Qr.stop().catch(()=>{});
+  document.getElementById('scannerWrap').classList.add('hidden');
+};
+
+async function handleScan(code){
+  const { data:customer } = await supabase.from('customers').select('*').eq('qr_code', code).maybeSingle();
+  if(!customer){ toast('QR not found', true); return; }
+  if(scanMode==='add'){
+    const newLoads = Math.min(15, (customer.loads||0)+1);
+    await supabase.from('customers').update({ loads: newLoads }).eq('id', customer.id);
+    await supabase.from('load_history').insert({ customer_id: customer.id, loads: 1, type: 'add', note: 'Scan add', staff_email: currentUser.email });
+    toast(`${customer.name} +1 stamp`);
+  } else {
+    if((customer.loads||0) < 15){ toast('Not enough stamps', true); return; }
+    const newLoads = (customer.loads||0) - 15;
+    await supabase.from('customers').update({ loads: newLoads }).eq('id', customer.id);
+    await supabase.from('load_history').insert({ customer_id: customer.id, loads: 15, type: 'redeem', note: 'Free wash', staff_email: currentUser.email });
+    toast(`${customer.name} redeemed!`);
   }
+  loadCustomerList();
 }
 
-window.stopScan = async () => {
-  document.getElementById('scannerContainer').classList.add('hidden')
-  if (html5QrCode && html5QrCode.isScanning) {
-    try { await html5QrCode.stop() } catch {}
-  }
-}
+// Manual add
+window.manualAdd = async () => {
+  const phone = document.getElementById('manualPhone').value.replace(/\D/g,'');
+  const note = document.getElementById('manualNote').value;
+  if(!currentUser){ toast('Login first', true); return; }
+  const { data:customer } = await supabase.from('customers').select('*').eq('phone', phone).maybeSingle();
+  if(!customer){ toast('Customer not found', true); return; }
+  const newLoads = Math.min(15, (customer.loads||0)+1);
+  await supabase.from('customers').update({ loads: newLoads }).eq('id', customer.id);
+  await supabase.from('load_history').insert({ customer_id: customer.id, loads: 1, type: 'add', note: note||'Manual', staff_email: currentUser.email });
+  toast(`${customer.name} +1 stamp`);
+  document.getElementById('manualPhone').value=''; document.getElementById('manualNote').value='';
+  loadCustomerList();
+};
 
-async function onScanSuccess(decodedText) {
-  showToast('Na-scan!')
-  if (scanMode === 'add') await handleAddByQR(decodedText)
-  else await handleRedeemByQR(decodedText)
-}
+// Register
+window.registerCustomer = async () => {
+  const name = document.getElementById('newName').value.trim();
+  const phone = document.getElementById('newPhone').value.replace(/\D/g,'');
+  if(!name || phone.length<10){ toast('Enter name & phone', true); return; }
+  const code = 'LM-' + Math.random().toString(36).substring(2,8).toUpperCase();
+  const { error } = await supabase.from('customers').insert({ name, phone, qr_code: code, loads: 0 });
+  if(error){ toast(error.message, true); return; }
+  toast(`Registered ${name}`);
+  document.getElementById('newName').value=''; document.getElementById('newPhone').value='';
+  loadCustomerList();
+};
 
-async function handleAddByQR(qr) {
-  const { data: customer } = await supabase.from('customers').select('*').eq('qr_code', qr).maybeSingle()
-  if (!customer) return showToast('Suki not found', 'error')
-  const newLoads = (customer.loads || 0) + 1
-  await supabase.from('customers').update({ stamps: newLoads }).eq('id', customer.id)
-  await supabase.from('load_history').insert({ customer_id: customer.id, stamps: 1, type: 'add', note: 'Scan add', staff_email: window.currentStaffEmail })
-  showToast(`${customer.name} +1 stamp! (${newLoads}/15)`)
-  if (newLoads >= 15) showToast('Ready to redeem! 🎉')
-  loadCustomerList()
-}
-
-async function handleRedeemByQR(qr) {
-  const { data: customer } = await supabase.from('customers').select('*').eq('qr_code', qr).maybeSingle()
-  if (!customer) return showToast('Suki not found', 'error')
-  if ((customer.loads || 0) < 15) return showToast(`Kulang pa! ${customer.loads}/15`, 'error')
-  const newLoads = customer.loads - 15
-  await supabase.from('customers').update({ stamps: newLoads }).eq('id', customer.id)
-  await supabase.from('load_history').insert({ customer_id: customer.id, stamps: 15, type: 'redeem', note: 'Free wash', staff_email: window.currentStaffEmail })
-  showToast(`🎉 ${customer.name} redeemed! Libre laba!`)
-  loadCustomerList()
-}
-
-window.manualAddLoad = async () => {
-  const phone = document.getElementById('manualPhone').value.trim()
-  if (!phone) return showToast('Enter phone', 'error')
-  const { data: customer } = await supabase.from('customers').select('*').eq('phone', phone).maybeSingle()
-  if (!customer) return showToast('Suki not found', 'error')
-  const newLoads = (customer.loads || 0) + 1
-  await supabase.from('customers').update({ stamps: newLoads }).eq('id', customer.id)
-  await supabase.from('load_history').insert({ customer_id: customer.id, stamps: 1, type: 'add', note: 'Manual', staff_email: window.currentStaffEmail })
-  showToast(`+1 stamp for ${customer.name}`)
-  document.getElementById('manualPhone').value = ''
-  loadCustomerList()
-}
-
-window.registerSuki = async () => {
-  const name = document.getElementById('newName').value.trim()
-  const phone = document.getElementById('newPhone').value.trim()
-  if (!name || !phone) return showToast('Kumpletohin name at phone', 'error')
-  const qr_code = 'LM-' + Math.floor(100000 + Math.random()*900000)
-  const { data, error } = await supabase.from('customers').insert({ name, phone, qr_code, stamps: 0 }).select().single()
-  if (error) return showToast(error.message, 'error')
-  showToast('Bagong suki registered!')
-  document.getElementById('newName').value = ''
-  document.getElementById('newPhone').value = ''
-  openQRModal(qr_code, name)
-  loadCustomerList()
-}
-
-async function loadCustomerList() {
-  const { data } = await supabase.from('customers').select('*').order('created_at', { ascending: false }).limit(200)
-  window.allCustomers = data || []
-  renderCustomers(window.allCustomers)
-}
-window.loadCustomerList = loadCustomerList
-
-function renderCustomers(list) {
-  const container = document.getElementById('customerList')
-  if (!list.length) {
-    container.innerHTML = `<p class="text-center text-gray-500 py-8 text-sm">Wala pang suki</p>`
-    return
-  }
-  container.innerHTML = list.map(c => `
-    <div class="group bg-white border border-gray-100 rounded-2xl p-3 hover:shadow-md transition cursor-pointer" onclick="showCustomerQRById('${c.id}')">
-      <div class="flex items-center justify-between gap-3">
-        <div class="min-w-0 flex-1">
-          <p class="font-semibold truncate">${c.name}</p>
-          <p class="text-xs text-gray-500">${c.phone}</p>
-        </div>
-        <div class="flex items-center gap-2">
-          <span class="px-2.5 py-1 bg-mint text-mama font-bold rounded-full text-xs">${c.loads||0}/15</span>
-          <div class="flex" onclick="event.stopPropagation()">
-            <button onclick="editCustomerById('${c.id}')" class="tap p-2 hover:bg-gray-100 rounded-xl" title="Edit">
-              <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-            </button>
-            <button onclick="deleteCustomer('${c.id}')" class="tap p-2 hover:bg-red-50 rounded-xl" title="Delete">
-              <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6"/></svg>
-            </button>
-          </div>
+// Management
+window.loadCustomerList = async () => {
+  if(!currentUser) return;
+  const q = (document.getElementById('searchCust').value||'').toLowerCase();
+  const { data } = await supabase.from('customers').select('*').order('name');
+  const list = document.getElementById('custList');
+  list.innerHTML = '';
+  (data||[]).filter(c=>!q || c.name.toLowerCase().includes(q) || c.phone.includes(q)).forEach(c=>{
+    const row = document.createElement('div');
+    row.className = 'flex items-center justify-between p-3 rounded-2xl hover:bg-gray-50 cursor-pointer border border-gray-100';
+    row.innerHTML = `
+      <div class="flex items-center gap-3" onclick='showCustQR(${JSON.stringify(c).replace(/'/g,"&apos;")})'>
+        <div class="w-10 h-10 rounded-xl bg-mama/10 flex items-center justify-center font-bold text-mama">${c.name.charAt(0)}</div>
+        <div>
+          <p class="font-semibold leading-tight">${c.name}</p>
+          <p class="text-xs text-gray-500">${c.phone} • ${c.loads||0} stamps</p>
         </div>
       </div>
-    </div>
-  `).join('')
-}
+      <div class="flex gap-1.5">
+        <button onclick="editCust('${c.id}')" class="px-3 py-1.5 rounded-lg bg-gray-100 text-xs font-semibold">Edit</button>
+        <button onclick="delCust('${c.id}')" class="px-3 py-1.5 rounded-lg bg-red-50 text-red-600 text-xs font-semibold">Del</button>
+      </div>`;
+    list.appendChild(row);
+  });
+};
 
-window.filterCustomers = () => {
-  const q = document.getElementById('searchCustomer').value.toLowerCase()
-  const filtered = window.allCustomers.filter(c => c.name.toLowerCase().includes(q) || c.phone.includes(q))
-  renderCustomers(filtered)
-}
+window.showCustQR = (c) => {
+  document.getElementById('qrName').textContent = c.name;
+  document.getElementById('qrCodeText').textContent = c.qr_code;
+  document.getElementById('qrcode').innerHTML = '';
+  new QRCode(document.getElementById('qrcode'), { text: c.qr_code, width: 200, height: 200 });
+  document.getElementById('qrModal').classList.remove('hidden');
+  document.getElementById('qrModal').classList.add('flex');
+};
 
-window.showCustomerQRById = (id) => {
-  const c = window.allCustomers.find(x => x.id === id)
-  if (c) openQRModal(c.qr_code, c.name)
-}
+window.editCust = async (id) => {
+  const { data:c } = await supabase.from('customers').select('*').eq('id', id).single();
+  const name = prompt('Name:', c.name); if(name===null) return;
+  const phone = prompt('Phone:', c.phone); if(phone===null) return;
+  const loads = prompt('Stamps (0-15):', c.loads||0); if(loads===null) return;
+  await supabase.from('customers').update({ name, phone, loads: parseInt(loads)||0 }).eq('id', id);
+  toast('Updated'); loadCustomerList();
+};
 
-window.editCustomerById = async (id) => {
-  const c = window.allCustomers.find(x => x.id === id)
-  if (!c) return
-  const newName = prompt('Edit name:', c.name)
-  if (newName === null) return
-  const newPhone = prompt('Edit phone:', c.phone)
-  if (newPhone === null) return
-  const newLoads = prompt('Edit stamps:', c.loads || 0)
-  if (newLoads === null) return
-  const { error } = await supabase.from('customers').update({ name: newName.trim(), phone: newPhone.trim(), stamps: parseInt(newLoads)||0 }).eq('id', id)
-  if (error) return showToast(error.message, 'error')
-  showToast('Na-update!')
-  loadCustomerList()
-}
+window.delCust = async (id) => {
+  if(!confirm('Delete customer?')) return;
+  await supabase.from('load_history').delete().eq('customer_id', id);
+  await supabase.from('customers').delete().eq('id', id);
+  toast('Deleted'); loadCustomerList();
+};
 
-window.deleteCustomer = async (id) => {
-  if (!confirm('Delete this suki? Mabubura din ang history.')) return
-  await supabase.from('load_history').delete().eq('customer_id', id)
-  const { error } = await supabase.from('customers').delete().eq('id', id)
-  if (error) return showToast(error.message, 'error')
-  showToast('Deleted')
-  loadCustomerList()
-}
-
-document.addEventListener('DOMContentLoaded', async () => {
-  switchTab('customer')
-  const { data: { session } } = await supabase.auth.getSession()
-  if (session?.user) {
-    window.currentStaffEmail = session.user.email
-    document.getElementById('staffLoginCard').classList.add('hidden')
-    document.getElementById('staffDashboard').classList.remove('hidden')
-    document.getElementById('staffEmailDisplay').textContent = session.user.email
-    loadCustomerList()
+// Init
+supabase.auth.getSession().then(({data})=>{
+  if(data.session){
+    currentUser = data.session.user;
+    document.getElementById('staffLogin').classList.add('hidden');
+    document.getElementById('staffDash').classList.remove('hidden');
+    document.getElementById('staffEmailShow').textContent = currentUser.email;
+    loadCustomerList();
   }
-})
+});
 </script>
 </body>
 </html>
